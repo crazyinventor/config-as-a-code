@@ -1,0 +1,15 @@
+- name: Add APT source
+  apt_repository:
+    repo: deb http://packages.cloud.google.com/apt cloud-sdk-bionic main
+    state: present
+
+- name: Add Apt signing key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: Install google-cloud-sdk
+  apt:
+    name: google-cloud-sdk
+    cache_valid_time: 0
+    update_cache: yes

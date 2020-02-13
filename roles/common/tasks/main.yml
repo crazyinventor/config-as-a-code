@@ -1,0 +1,10 @@
+---
+- include_tasks: packages.yml
+
+- include_tasks: secrets.yml
+
+- name: Install gcloud sdk if necessary
+  block:
+   - command: gcloud version
+  rescue:
+   - include_tasks: gcloud.yml

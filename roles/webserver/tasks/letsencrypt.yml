@@ -1,0 +1,9 @@
+- name: Add Apt repository
+  apt_repository:
+    repo: ppa:certbot/certbot
+
+- name: Install python-certbot-nginx
+  apt:
+    name: python-certbot-nginx
+    cache_valid_time: 0
+    update_cache: yes

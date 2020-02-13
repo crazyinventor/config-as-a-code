@@ -1,0 +1,49 @@
+- name: Install Nginx
+  apt:
+    name: nginx
+    update_cache: yes
+
+- name: Start Nginx
+  service:
+      name: nginx
+      state: started
+
+- name: Create directory for Nginx files
+  file:
+    path: /srv/nginx
+    state: directory
+    mode: '0755'
+    owner: www-data
+    group: www-data
+
+- name: Create directory for default website
+  file:
+    path: /srv/nginx/html
+    state: directory
+    mode: '0755'
+    owner: www-data
+    group: www-data
+
+- name: Create default website index.html
+  template:
+    src: default_site_index.html
+    dest: /srv/nginx/html/index.html
+    mode: '0644'
+    owner: www-data
+    group: www-data
+
+- name: Configure Nginx default website
+  template:
+    src: nginx_default_site.conf
+    dest: /etc/nginx/sites-available/default
+    mode: '0644'
+    owner: www-data
+    group: www-data
+  register: nginx_default_site_config
+
+- name: Restart Nginx
+  become: yes
+  service:
+      name: nginx
+      state: restarted
+  when: nginx_default_site_config.changed == true

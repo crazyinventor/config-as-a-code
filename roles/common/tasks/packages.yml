@@ -1,0 +1,11 @@
+- name: Install apt packages
+  apt:
+    pkg:
+    - python3-pip
+    - unzip
+
+- name: Install python pip packages
+  pip:
+    name:
+    - google-auth
+    - requests
