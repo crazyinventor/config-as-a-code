@@ -3,6 +3,7 @@
     pkg:
     - python3-pip
     - unzip
+    update_cache: yes
 
 - name: Install python pip packages
   pip:
