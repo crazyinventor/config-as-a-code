@@ -1,0 +1,9 @@
+# Generic
+application_name: null
+# Directory
+application_root_directory: "/srv/{{ application_name }}"
+
+# Nginx site config
+application_domain_name: null
+root_index: index.html
+try_files: "$uri $uri/ /index.html"

@@ -1,0 +1,27 @@
+- name: Check application directory
+  file:
+    path: "{{ application_root_directory }}"
+    state: directory
+    mode: '0755'
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: Check temporary directory
+  file:
+    path: "{{ application_root_directory }}/tmp"
+    state: directory
+    mode: '0755'
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- include_tasks: deploy.yml
+
+- name: check if nginx site config exists
+  stat:
+    path: "/etc/nginx/sites-enabled/{{ application_name }}"
+  register: nginx_site_conf
+
+- include_tasks: website.yml
+  when: nginx_site_conf.stat.exists == false

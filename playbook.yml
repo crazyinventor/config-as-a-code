@@ -1,8 +1,7 @@
-- name: Prepare webservers
+- name: Configure webservers
   hosts: tag_webserver
   gather_facts: no
   become: yes
-  tags: provision
   roles:
     - role: common
     - role: webserver
@@ -11,8 +10,15 @@
   hosts: tag_webserver
   gather_facts: no
   become: yes
-  tags:
-    - deploy
-    - provision
-  roles:
-    - role: spa
+  tags: deploy
+  tasks:
+    - include_role:
+        name: website
+      vars:
+        application_name: bigbro-spa
+        application_domain_name: prototype.lab.crazyinventor.net
+    - include_role:
+        name: website
+      vars:
+        application_name: dsinfo
+        application_domain_name: davidschneider.info
