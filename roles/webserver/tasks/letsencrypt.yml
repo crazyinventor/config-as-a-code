@@ -7,3 +7,13 @@
     name: python-certbot-nginx
     cache_valid_time: 0
     update_cache: yes
+
+- name: Create cron job to renew certificates before expiration
+  cron:
+    name: "LetsEncryot certificates renewal"
+    minute: "0"
+    hour: "2"
+    weekday: "6"
+    month: "*"
+    day: "*"
+    job: "certbot renew --nginx -n --agree-tos -m d4vid81@gmail.com >> /dev/null"
