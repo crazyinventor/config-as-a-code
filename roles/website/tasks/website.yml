@@ -15,10 +15,10 @@
     group: root
     state: link
 
+- name: Run LetsEncrypt
+  command: certbot --nginx -d {{ application_domain_name }}{% if application_domain_name_append_www %} -d www.{{ application_domain_name }}{% endif %} --expand --non-interactive --agree-tos -m d4vid81@gmail.com
+
 - name: Restart Nginx
   service:
     name: nginx
     state: restarted
-
-- name: Run LetsEncrypt
-  command: certbot --nginx -d {{ application_domain_name }} -d www.{{ application_domain_name }} --expand --non-interactive --agree-tos -m d4vid81@gmail.com
