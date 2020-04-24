@@ -1,4 +1,4 @@
-- name: "Write Nginx site config for UI"
+- name: "Write Nginx site config for API"
   template:
     src: website.conf
     dest: "/etc/nginx/sites-available/{{ application_name }}.conf"
@@ -10,13 +10,13 @@
 - name: check if ssl certs exists
   stat:
     path: "/etc/letsencrypt/live/{{ application_domain_name }}"
-  register: ui_ssl_conf_exists
+  register: api_ssl_conf_exists
 
 - name: Run LetsEncrypt
   command: certbot --nginx -d {{ application_domain_name }} --expand --non-interactive --agree-tos -m d4vid81@gmail.com certonly
-  when: ui_ssl_conf_exists.stat.exists == false
+  when: api_ssl_conf_exists.stat.exists == false
 
-- name: Enable Nginx site config for UI
+- name: Enable Nginx site config for API
   file:
     src: "/etc/nginx/sites-available/{{ application_name }}.conf"
     dest: "/etc/nginx/sites-enabled/{{ application_name }}"

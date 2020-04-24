@@ -2,6 +2,7 @@
   hosts: tag_webserver
   gather_facts: no
   become: yes
+  tags: config
   roles:
     - role: common
     - role: webserver
@@ -12,16 +13,34 @@
   become: yes
   tags: deploy
   tasks:
-    - name: Deploying BigBro SPA
-      include_role:
-        name: website
-      vars:
-        application_name: bigbro-spa
-        application_domain_name: prototype.lab.crazyinventor.net
-        application_domain_name_append_www: false
-    - name: Deploying DavidSchneider.info website
-      include_role:
-        name: website
-      vars:
-        application_name: dsinfo
-        application_domain_name: davidschneider.info
+  - name: Deploying DavidSchneider.info website
+    include_role:
+      name: website
+    vars:
+      application_name: dsinfo
+      application_domain_name: davidschneider.info
+
+- name: Deploy dev environment
+  hosts: tag_webserver
+  gather_facts: no
+  become: yes
+  tags:
+    - dev
+    - environment
+  tasks:
+  - name: Deploying BigBro SPA
+    include_role:
+      name: website
+    vars:
+      application_name: bigbro-ui
+      application_domain_name: stage.bigbro.lab.crazyinventor.net
+      application_domain_name_append_www: false
+  - name: Deploying BigBro API
+    tags: environment
+    include_role:
+      name: api
+    vars:
+      application_name: bigbro-api
+      application_domain_name: api.bigbro.lab.crazyinventor.net
+      application_domain_name_append_www: false
+      APP_CORS_ORIGIN: stage.bigbro.lab.crazyinventor.net

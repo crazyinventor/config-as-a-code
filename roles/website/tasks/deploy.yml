@@ -7,7 +7,7 @@
   check_mode: false
 
 - name: Check list of latest archived artifact
-  shell: gsutil ls -l gs://crazyinventor-build-artifacts/{{ application_name }} | sort -k 2 -r | awk '{print $NF}'
+  shell: gsutil ls -l gs://crazyinventor-build-artifacts/{{ application_name }} | sort -k 2 -r | grep "dev-" | awk '{print $NF}'
   register: gsutil_list
   check_mode: false
 
