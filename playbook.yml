@@ -11,26 +11,29 @@
   hosts: tag_webserver
   gather_facts: no
   become: yes
-  tags: deploy
+  tags:
+    - dsinfo
+    - deploy
   tasks:
   - name: Deploying DavidSchneider.info website
+    tags: environment
     include_role:
-      name: website
+      name: dsinfo
     vars:
       application_name: dsinfo
       application_domain_name: davidschneider.info
 
-- name: Deploy dev environment
+- name: Deploy BigBro staging environment
   hosts: tag_webserver
   gather_facts: no
   become: yes
   tags:
-    - dev
-    - environment
+    - bigbro
+    - deploy
   tasks:
   - name: Deploying BigBro UI
     include_role:
-      name: website
+      name: ui
     vars:
       application_name: bigbro-ui
       application_domain_name: stage.bigbro.lab.crazyinventor.net

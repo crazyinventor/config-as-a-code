@@ -17,3 +17,13 @@
     month: "*"
     day: "*"
     job: "certbot renew --nginx -n --agree-tos -m d4vid81@gmail.com >> /dev/null"
+
+- name: Create cron job to renew certificates before expiration
+  cron:
+    name: "LetsEncryot certificates renewal"
+    minute: "30"
+    hour: "2"
+    weekday: "6"
+    month: "*"
+    day: "*"
+    job: "certbot renew --nginx -n --agree-tos -m d4vid81@gmail.com >> /dev/null"
