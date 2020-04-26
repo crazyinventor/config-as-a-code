@@ -28,7 +28,7 @@
     - dev
     - environment
   tasks:
-  - name: Deploying BigBro SPA
+  - name: Deploying BigBro UI
     include_role:
       name: website
     vars:

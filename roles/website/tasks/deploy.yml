@@ -11,8 +11,8 @@
   register: gsutil_list
   check_mode: false
 
-- name: Download archived artifact
-  shell: "gsutil cp {{ gsutil_list.stdout_lines[1] }} {{ application_root_directory }}/tmp/latest.tar.gz"
+- name: "Download archived artifact {{ gsutil_list.stdout_lines[0] }}"
+  shell: "gsutil cp {{ gsutil_list.stdout_lines[0] }} {{ application_root_directory }}/tmp/latest.tar.gz"
 
 - name: Extract archived artifact
   unarchive:

@@ -7,12 +7,12 @@
   check_mode: false
 
 - name: Check list of latest archived artifact
-  shell: gsutil ls -l gs://crazyinventor-build-artifacts/{{ application_name }} | sort -k 2 -r | awk '{print $NF}'
+  shell: gsutil ls -l gs://crazyinventor-build-artifacts/{{ application_name }} | sort -k 2 -r | grep "master-" | awk '{print $NF}'
   register: gsutil_list
   check_mode: false
-  
-- name: Download archived artifact
-  shell: "gsutil cp {{ gsutil_list.stdout_lines[1] }} {{ application_root_directory }}/tmp/latest.tar.gz"
+
+- name: "Download archived artifact {{ gsutil_list.stdout_lines[0] }}"
+  shell: "gsutil cp {{ gsutil_list.stdout_lines[0] }} {{ application_root_directory }}/tmp/latest.tar.gz"
 
 - name: Extract archived artifact
   unarchive:
