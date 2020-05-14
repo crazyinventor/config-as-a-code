@@ -1,0 +1,10 @@
+- name: Write variables to environment file
+  lineinfile:
+    path: "{{ application_root_directory }}/shared/{{ application_env_file }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  become: yes
+  become_user: "{{ application_user }}"
+  loop:
+    '{{ application_env_vars }}'

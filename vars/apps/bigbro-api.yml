@@ -1,0 +1,34 @@
+application_name: bigbro-api
+application_version: master
+application_user: bigbro
+application_group: bigbro
+application_root_directory: /srv/bigbro-api
+application_webroot_directory: "{{ application_root_directory }}/current/dist/public"
+application_domain_name: api.bigbro.lab.crazyinventor.net
+application_shared_files:
+  - 'dist/.env'
+  - 'dist/database/database.sqlite'
+application_env_file: 'dist/.env'
+application_env_vars:
+  - { regexp: '^APP_NAME', line: 'APP_NAME=Centerverse' }
+  - { regexp: '^APP_ENV', line: 'APP_ENV=local' }
+  - { regexp: '^APP_DEBUG', line: 'APP_DEBUG=true' }
+  - { regexp: '^APP_URL', line: 'APP_URL=https://api.bigbro.lab.crazyinventor.net' }
+  - { regexp: '^DB_CONNECTION', line: 'DB_CONNECTION=sqlite' }
+  - { regexp: '^QUEUE_CONNECTION', line: 'QUEUE_CONNECTION=database' }
+  - { regexp: '^APP_CORS_ORIGIN', line: 'APP_CORS_ORIGIN=https://stage.bigbro.lab.crazyinventor.net' }
+  - { regexp: '^APP_KEY', line: 'APP_KEY=base64:W67BUpJw9GLcxOiJrq+i9Ul4DNri6k21BoEqpIomNuY=' }
+website_try_files: "$uri $uri/ /index.php?$query_string"
+application_enable_php: true
+application_cronjobs:
+  bigbro_api_cron:
+    cron_task_month: "*"
+    cron_task_day: "*"
+    cron_task_weekday: "*"
+    cron_task_minute: "*"
+    cron_task_hour: "*"
+    cron_task_user: "www-data"
+    cron_task_job: "cd {{ application_root_directory }}/current/dist && php artisan schedule:run >> /dev/null 2>&1"
+    cron_task_state: present
+application_deploy_commands:
+  - { chdir: 'dist', command: 'php artisan migrate --force' }

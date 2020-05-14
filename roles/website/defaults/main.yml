@@ -1,0 +1,4 @@
+website_domain_name: null
+website_root_directory: null
+website_domain_name_enable_www: false
+website_try_files: "$uri $uri/ /index.html"

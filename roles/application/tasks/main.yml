@@ -1,0 +1,30 @@
+
+  - name: "Ensure group '{{ application_group }}' exists"
+    group:
+      name: "{{ application_group }}"
+      state: present
+  - name: "Ensure user '{{ application_user }}' exists"
+    user:
+      name: "{{ application_user }}"
+      groups: "{{ application_group }}"
+      state: present
+  - name: Create application directory
+    file:
+      path: "{{ application_root_directory }}"
+      state: directory
+      owner: "{{ application_user }}"
+      group: "{{ application_group }}"
+      mode: 755
+  - name: Create application subdirectories
+    file:
+      path: "{{ application_root_directory }}/{{ item }}"
+      state: directory
+      owner: "{{ application_user }}"
+      group: "{{ application_group }}"
+      mode: 755
+    with_items:
+      - logs
+      - backups
+  - name: "Initialize the {{ application_root_directory }} directory for deployments"
+    deploy_helper:
+      path: "{{ application_root_directory }}"

@@ -1,0 +1,21 @@
+- name: Create shared directories
+  file:
+    path: "{{ application_root_directory }}/shared/{{ item | dirname }}"
+    state: directory
+    owner: "{{ application_user }}"
+    group: "{{ application_group }}"
+    recurse: yes
+  with_items:
+    '{{ application_shared_files }}'
+  when: application_shared_files is defined
+
+- name: Create shared files
+  file:
+    path: "{{ application_root_directory }}/shared/{{ item }}"
+    state: touch
+    owner: "{{ application_user }}"
+    group: "{{ application_group }}"
+  with_items:
+    '{{ application_shared_files }}'
+  when: application_shared_files is defined
+  changed_when: false

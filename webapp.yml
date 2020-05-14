@@ -1,0 +1,56 @@
+- name: Prepare system user and directories
+  hosts: tag_webserver
+  gather_facts: no
+  tags:
+    - provision
+  become: yes
+  tasks:
+    - name: Load website configuration
+      include_vars:
+        file: "vars/apps/{{ application }}.yml"
+    - name: Create group, user, and directories for application
+      include_role:
+        name: application
+
+- name: Configue application
+  hosts: tag_webserver
+  gather_facts: no
+  tags: config
+  become: yes
+  tasks:
+    - name: Load website configuration
+      include_vars:
+        file: "vars/apps/{{ application }}.yml"
+    - name: "Schedule cronjobs"
+      include_role:
+        name: cron
+      when: application_cronjobs is defined
+    - name: Configure PHP pool
+      include_role:
+        name: phppool
+    - name: Configure Nginx host
+      include_role:
+        name: website
+      vars:
+        website_domain_name: "{{ application_domain_name }}"
+        website_root_directory: "{{ application_webroot_directory }}"
+    - name: Check shared directories and files
+      include_role:
+        name: shared
+    - name: Configure .env file
+      include_role:
+        name: dotenv
+      when: application_env_vars is defined
+
+- name: Download Distribute application artifact
+  hosts: tag_webserver
+  gather_facts: no
+  tags: deploy
+  become: yes
+  tasks:
+    - name: Load website configuration
+      include_vars:
+        file: "vars/apps/{{ application }}.yml"
+    - name: Deploy application from artifact
+      include_role:
+        name: deploy

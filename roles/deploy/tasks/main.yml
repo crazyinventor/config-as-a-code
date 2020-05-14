@@ -1,0 +1,74 @@
+- name: Connect to gcloud console
+  shell: "gcloud auth activate-service-account --key-file=/root/gc-storage.json"
+  check_mode: false
+- name: "Check list of latest archived artifact for {{ application_name }}/{{ application_version }}"
+  shell: "gsutil ls -l gs://crazyinventor-build-artifacts/{{ application_name }} | sort -k 2 -r | grep \"{{ application_version }}-\" | awk '{print $NF}'"
+  register: gsutil_list
+  check_mode: false
+- fail:
+    msg: No artifact to download found
+  when: gsutil_list.stdout_lines|length==0
+- set_fact: application_artifact="{{ gsutil_list.stdout_lines | first | basename }}"
+- name: "Download archived artifact {{ gsutil_list.stdout_lines[0] }}"
+  shell: "gsutil cp {{ gsutil_list.stdout_lines | first }} /srv/{{ application_name }}/tmp/{{ application_artifact }}"
+- name: Initialize the deployment
+  deploy_helper:
+    path: "/srv/{{ application_name }}"
+  become: yes
+  become_user: "{{ application_user }}"
+- name: Create release directory
+  file:
+    path: "{{ deploy_helper.new_release_path }}"
+    state: directory
+  become: yes
+  become_user: "{{ application_user }}"
+- name: Attemp deploy
+  block:
+  - name: Decompress artifact
+    unarchive:
+      src: "/srv/{{ application_name }}/tmp/{{ application_artifact }}"
+      dest: "{{ deploy_helper.new_release_path }}"
+      remote_src: yes
+    become: yes
+    become_user: "{{ application_user }}"
+  - name: Create directories for shared files
+    file:
+      path: "{{ deploy_helper.new_release_path }}/{{ item | dirname }}"
+      state: directory
+      owner: "{{ application_user }}"
+      group: "{{ application_group }}"
+      recurse: yes
+    with_items:
+      '{{ application_shared_files }}'
+    when: application_shared_files is defined
+  - name: Link shared files
+    file:
+      src: "{{ deploy_helper.shared_path }}/{{ item }}"
+      dest: "{{ deploy_helper.new_release_path }}/{{ item }}"
+      state: link
+    with_items: '{{ application_shared_files }}'
+    when: application_shared_files is defined
+
+  - name: Run deployment commands
+    shell: "{{ item.command }}"
+    args:
+      chdir: "{{ deploy_helper.new_release_path }}/{{ item.chdir }}"
+    loop:
+      '{{ application_deploy_commands }}'
+    when: application_deploy_commands is defined
+
+  - name: Finalize the deploy
+    deploy_helper:
+      path: "/srv/{{ application_name }}"
+      release: '{{ deploy_helper.new_release }}'
+      state: finalize
+    become: yes
+    become_user: "{{ application_user }}"
+  rescue:
+    - name: Clean up failed deploy
+      deploy_helper:
+        path: "/srv/{{ application_name }}"
+        release: '{{ deploy_helper.new_release }}'
+        state: clean
+      become: yes
+      become_user: "{{ application_user }}"

@@ -1,0 +1,11 @@
+- name: "Configure PHP pool for {{ application_name }}"
+  template:
+    src: pool.conf
+    dest: "/etc/php/7.2/fpm/pool.d/{{ application_name }}.conf"
+  register: phppool_conf
+
+- name: Restart PHP FPM
+  service:
+    name: php7.2-fpm
+    state: restarted
+  when: phppool_conf.changed == true

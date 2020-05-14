@@ -1,0 +1,10 @@
+application_name: dsinfo
+application_version: master
+application_user: dsinfo
+application_group: dsinfo
+application_root_directory: /srv/dsinfo
+application_webroot_directory: "{{ application_root_directory }}/current/dist"
+application_domain_name: davidschneider.info
+website_domain_name_enable_www: true
+website_try_files: "$uri $uri/ /index.html"
+application_enable_php: false

@@ -1,4 +1,4 @@
-- name: "Write Nginx site config for API"
+- name: "Write Nginx site config for {{ application_name }}"
   template:
     src: website.conf
     dest: "/etc/nginx/sites-available/{{ application_name }}.conf"
@@ -13,10 +13,16 @@
   register: api_ssl_conf_exists
 
 - name: Run LetsEncrypt
-  command: certbot --nginx -d {{ application_domain_name }} --expand --non-interactive --agree-tos -m d4vid81@gmail.com certonly
+  block:
+  - name:
+    command: certbot --nginx -d {{ application_domain_name }} --expand --non-interactive --agree-tos -m d4vid81@gmail.com certonly
+    when: website_domain_name_enable_www == false
+  - name:
+    command: certbot --nginx -d {{ application_domain_name }}  -d www.{{ application_domain_name }} --expand --non-interactive --agree-tos -m d4vid81@gmail.com certonly
+    when: website_domain_name_enable_www == true
   when: api_ssl_conf_exists.stat.exists == false
 
-- name: Enable Nginx site config for API
+- name: "Enable Nginx site config for {{ application_name }}"
   file:
     src: "/etc/nginx/sites-available/{{ application_name }}.conf"
     dest: "/etc/nginx/sites-enabled/{{ application_name }}"

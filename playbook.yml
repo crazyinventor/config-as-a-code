@@ -2,48 +2,31 @@
   hosts: tag_webserver
   gather_facts: no
   become: yes
-  tags: config
+  tags: system
   roles:
     - role: common
     - role: webserver
 
-- name: Deploy web applications
-  hosts: tag_webserver
-  gather_facts: no
-  become: yes
-  tags:
-    - dsinfo
-    - deploy
-  tasks:
-  - name: Deploying DavidSchneider.info website
-    tags: environment
-    include_role:
-      name: dsinfo
-    vars:
-      application_name: dsinfo
-      application_domain_name: davidschneider.info
+- name: Deploy example
+  tags: app
+  vars:
+    application: example
+  import_playbook: webapp.yml
 
-- name: Deploy BigBro staging environment
-  hosts: tag_webserver
-  gather_facts: no
-  become: yes
-  tags:
-    - bigbro
-    - deploy
-  tasks:
-  - name: Deploying BigBro UI
-    include_role:
-      name: ui
-    vars:
-      application_name: bigbro-ui
-      application_domain_name: stage.bigbro.lab.crazyinventor.net
-      application_domain_name_append_www: false
-  - name: Deploying BigBro API
-    tags: environment
-    include_role:
-      name: api
-    vars:
-      application_name: bigbro-api
-      application_domain_name: api.bigbro.lab.crazyinventor.net
-      application_domain_name_append_www: false
-      APP_CORS_ORIGIN: stage.bigbro.lab.crazyinventor.net
+- name: Deploy bigbro-ui
+  tags: app
+  vars:
+    application: bigbro-ui
+  import_playbook: webapp.yml
+
+- name: Deploy bigbro-api
+  tags: app
+  vars:
+    application: bigbro-api
+  import_playbook: webapp.yml
+
+- name: Deploy dsinfo
+  tags: app
+  vars:
+    application: dsinfo
+  import_playbook: webapp.yml

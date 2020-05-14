@@ -1,0 +1,13 @@
+application_name: example
+application_version: master
+application_user: example
+application_group: example
+application_root_directory: /srv/example
+application_webroot_directory: "{{ application_root_directory }}/current"
+application_domain_name: example.lab.crazyinventor.net
+application_shared_files:
+  - '.env'
+application_env_vars:
+  - { regexp: '^APP_NAME', line: "APP_NAME={{ application_name }}" }
+website_try_files: "$uri $uri/ /index.php?$args"
+application_enable_php: true

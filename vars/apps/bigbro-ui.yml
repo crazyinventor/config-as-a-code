@@ -1,0 +1,9 @@
+application_name: bigbro-ui
+application_version: dev
+application_user: bigbro
+application_group: bigbro
+application_root_directory: /srv/bigbro-ui
+application_webroot_directory: "{{ application_root_directory }}/current/dist"
+application_domain_name: stage.bigbro.lab.crazyinventor.net
+website_try_files: "$uri $uri/ /index.html"
+application_enable_php: false

@@ -12,7 +12,7 @@
   file:
     path: /srv/nginx
     state: directory
-    mode: '0755'
+    mode: '0750'
     owner: www-data
     group: www-data
 
@@ -20,7 +20,7 @@
   file:
     path: /srv/nginx/html
     state: directory
-    mode: '0755'
+    mode: '0750'
     owner: www-data
     group: www-data
 
